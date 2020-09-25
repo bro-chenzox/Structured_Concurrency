@@ -23,37 +23,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun main() {
-        val parentJob = CoroutineScope(IO).launch(handler) {
-            // ---------- JOB A ----------
-            val jobA = launch {
-                val resultA = getResult(1)
-                println("ResultA: $resultA")
-            }
-            jobA.invokeOnCompletion {
-                if (it != null) {
-                    println("Error getting resultA: $it")
-                }
-            }
+        val parentJob = CoroutineScope(IO).launch {
 
-            // ---------- JOB B ----------
-            val jobB = launch {
-                val resultB = getResult(2)
-                println("ResultB: $resultB")
-            }
-            jobB.invokeOnCompletion {
-                if (it != null) {
-                    println("Error getting resultB: $it")
+            supervisorScope {
+                // ---------- JOB A ----------
+                val jobA = launch {
+                    val resultA = getResult(1)
+                    println("ResultA: $resultA")
                 }
-            }
+                jobA.invokeOnCompletion {
+                    if (it != null) {
+                        println("Error getting resultA: $it")
+                    }
+                }
 
-            // ---------- JOB C ----------
-            val jobC = launch {
-                val resultC = getResult(3)
-                println("ResultC: $resultC")
-            }
-            jobC.invokeOnCompletion {
-                if (it != null) {
-                    println("Error getting resultC: $it")
+                // ---------- JOB B ----------
+                val jobB = launch((handler)) {
+                    val resultB = getResult(2)
+                    println("ResultB: $resultB")
+                }
+                jobB.invokeOnCompletion {
+                    if (it != null) {
+                        println("Error getting resultB: $it")
+                    }
+                }
+
+                // ---------- JOB C ----------
+                val jobC = launch {
+                    val resultC = getResult(3)
+                    println("ResultC: $resultC")
+                }
+                jobC.invokeOnCompletion {
+                    if (it != null) {
+                        println("Error getting resultC: $it")
+                    }
                 }
             }
         }
