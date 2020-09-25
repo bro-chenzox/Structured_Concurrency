@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun main() {
-        val parentJob = CoroutineScope(IO).launch {
+        val parentJob = CoroutineScope(IO).launch(handler) {
 
             supervisorScope {
                 // ---------- JOB A ----------
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // ---------- JOB B ----------
-                val jobB = launch((handler)) {
+                val jobB = launch {
                     val resultB = getResult(2)
                     println("ResultB: $resultB")
                 }
